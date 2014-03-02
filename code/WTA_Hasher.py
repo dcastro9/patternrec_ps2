@@ -16,36 +16,30 @@ class WTAHasher(object):
     """
 
     def __init__(self, k, num_permutations, dataset):
-    	self._k_value = k
-    	self._num_perm = num_permutations
-    	self._dataset = dataset
-    	self._permutations = []
-    	for val in range(num_permutations):
-    		indices = range(self._dataset.dimension)
-    		shuffle(indices)
-    		self._permutations.append(indices[:k])
+        self._k_value = k
+        self._num_perm = num_permutations
+        self._dataset = dataset
+        self._permutations = []
+        for val in range(num_permutations):
+            indices = range(self._dataset.dimension)
+            shuffle(indices)
+            self._permutations.append(indices[:k])
 
-    		
+            
 
     def hashDataset(self, out_file):
-    	# Create out_file.
-    	for data_point in self._dataset.data:
-    		generated_hash = ""
-    		for perm in self._permutations:
-    			generated_hash += \
-    				str(self.__getHashCode(data_point[:-1], perm)) + ","
-    		generated_hash = generated_hash[:-1] + "\n"
-    		# Write hashed point to file.
-    	# Save file.
-
-
+        out_f = open(out_file, 'w')
+        for data_point in self._dataset.data:
+            generated_hash = ""
+            for perm in self._permutations:
+                generated_hash += \
+                    str(self.__getHashCode(data_point[:-1], perm)) + ","
+            generated_hash += str(int(data_point[-1])) + "\n"
+            out_f.write(generated_hash)
+        out_f.close()
 
     def __getHashCode(self, data_point, permutation):
-    	# Temporary Array for permuted data point.
-    	temp_array = []
-    	# Permute data_point.
-    	for index in permutation:
-    		temp_array.append(data_point[index])
-
-    	# Returns the index of the maximum of the subset of the datapoint.
-    	return np.argmax(temp_array)
+        temp_array = []
+        for index in permutation:
+            temp_array.append(data_point[index])
+        return np.argmax(temp_array)
