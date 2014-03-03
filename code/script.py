@@ -21,4 +21,11 @@ alcohol_datasets = [ds_orig, # Original dataset.
                     ds_norm, # Normalized from 0 to 1.
                     ds_norm_weigh, # Normalized + manually determined weights.
                     ds_wta_norm, # Normalized + WTA Hash (rank correlation)
-                    ds_wta_norm_weigh] # Normalized + Weighed + WTA Hash
+                    ds_wta_norm_weigh] # Normalized + Weighed + WTA Hash.
+
+for ds in alcohol_datasets:
+    # Get 80% of the dataset for training data.
+
+    # Get 20% of the dataset for test data.
+
+    # Run kNN with numerous k to obtain the best K.

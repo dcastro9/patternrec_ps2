@@ -89,6 +89,17 @@ class Dataset(object):
         return np.array(random.sample(
             self._classified_data[class_index], num_samples))
 
+    def getRandomPercentOfData(self, training_percent):
+        """ Returns both training and test data for a random percentage of the
+        dataset.
+
+        Attributes:
+            training_percent: Value between 0-100 of the percent of training
+                              data you want. Will return 100 - training_percent
+                              test data (basically the rest).
+        """
+        return None
+
     def kFoldCrossValidation(self, k):
         # Find the smallest class.
         size = None
