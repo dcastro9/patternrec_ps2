@@ -14,14 +14,14 @@ class kNNClassifier(object):
        k: Number of nearest neighbors.
     """
 
-    DISTANCE_MEASURES = {0:'Eucledian', 1:'Cayley'}
+    DISTANCE_MEASURES = {0:'Eucledian', 1:'Hamming'}
 
     def __init__(self, training_data, k, distance=0):
     	self._training_data = training_data
     	self._k_value = k
         self._distance = distance
 
-    def test(testing_data):
+    def test(self, testing_data):
         correct = 0
         incorrect = 0
     	for test_point in testing_data:
@@ -50,10 +50,14 @@ class kNNClassifier(object):
                 correct += 1
             else:
                 incorrect += 1
-        return correct / (correct + incorrect)
+        return float(correct) / float(correct + incorrect)
 
 
 
-    def __distance(v1, v2):
+    def __distance(self, v1, v2):
         if (self._distance == 0):
-            return np.linalg.norm(v1-v2)
+            return np.linalg.norm(np.array(v1)-np.array(v2))
+        elif (self._distance == 1):
+            # This line was obtained from: 
+            # http://en.wikipedia.org/wiki/Hamming_distance
+            return sum(ch1 != ch2 for ch1, ch2 in zip(v1,v2))

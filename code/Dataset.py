@@ -5,7 +5,8 @@ import csv
 import itertools
 import math
 import numpy as np
-import random
+from random import sample
+from random import shuffle
 
 class Dataset(object):
     """ Represents a dataset. Can divide the dataset into 'k' classes,
@@ -13,6 +14,8 @@ class Dataset(object):
 
     Attributes:
         file_path: Location of the CSV data file.
+        whiten: Subtracts the mean from each descriptor, choose whiten OR
+                normalize, not both.
         normalize: Defaults to false, can be True, will normalize from 0 to 1
         weights: If you want to custom weigh the normalization from 0 to n
                  pass in a weight vector of the length of the number of
@@ -22,7 +25,7 @@ class Dataset(object):
 
     """
 
-    def __init__(self, file_path, normalize=False, weights=None):
+    def __init__(self, file_path, whiten=False, normalize=False, weights=None):
         """Creates a Dataset object.
         """
         self._data = []
@@ -35,7 +38,12 @@ class Dataset(object):
             for data_point in file_reader:
                 for val in range(len(data_point)):
                     data_point[val] = float(data_point[val])
-                    if (normalize and val != len(data_point) - 1):
+                    if (whiten and val != len(data_point) - 1):
+                        if (len(self._norm_vals) < len(data_point) - 1):
+                            self._norm_vals.append(data_point[val])
+                        else:
+                            self._norm_vals[val] += data_point[val]
+                    elif (normalize and val != len(data_point) - 1):
                         if (len(self._norm_vals) < len(data_point) - 1):
                             # Sets the minimum and max to the first value.
                             self._norm_vals.append(
@@ -52,7 +60,13 @@ class Dataset(object):
         for val in range(len(self._classes)):
             self._classified_data.append([])
         # Normalize the data from 0 to 1.
-        if normalize:
+        if whiten:
+            for val in range(len(self._norm_vals)):
+                self._norm_vals[val] /= len(self._data)
+            for data_point in self._data:
+                for val in range(len(data_point) - 1):
+                    data_point[val] /= self._norm_vals[val]
+        elif normalize:
             if weights and len(weights) != len(data_point) - 1:
                 raise ValueError("Weights is not the correct length.")
             elif not weights:
@@ -86,7 +100,7 @@ class Dataset(object):
         """
         if num_samples > len(self._classified_data[class_index]):
             raise ValueError("Not enough data samples.")
-        return np.array(random.sample(
+        return np.array(sample(
             self._classified_data[class_index], num_samples))
 
     def getRandomPercentOfData(self, training_percent):
@@ -94,11 +108,26 @@ class Dataset(object):
         dataset.
 
         Attributes:
-            training_percent: Value between 0-100 of the percent of training
-                              data you want. Will return 100 - training_percent
-                              test data (basically the rest).
+            training_percent: Value between 0-1 that represents the percent of
+                              data you want. Will return 1 - training_percent
+                              percent as the test data (the rest).
         """
-        return None
+        return Dataset.getRandomPercent(self._data, training_percent)
+
+    @staticmethod
+    def getRandomPercent(data, percent):
+        indices = range(len(data))
+        shuffle(indices)
+        separator = int(len(data)*percent)
+
+        training_data = []
+        test_data = []
+        for index in indices[:separator]:
+            training_data.append(data[index])
+        for index in indices[separator:]:
+            test_data.append(data[index])
+
+        return training_data, test_data
 
     def kFoldCrossValidation(self, k):
         # Find the smallest class.
