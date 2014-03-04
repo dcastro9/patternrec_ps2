@@ -22,16 +22,19 @@ class Dataset(object):
                  features (without counting the classification) that has the
                  'n' value you want to normalize to. For WTA Hash, this can be
                  useful in giving certain features more weight than others.
+        name: Name your dataset.
 
     """
 
-    def __init__(self, file_path, whiten=False, normalize=False, weights=None):
+    def __init__(self, file_path, whiten=False, normalize=False, weights=None,
+                 name=''):
         """Creates a Dataset object.
         """
         self._data = []
         self._classes = []
         self._classified_data = []
         self._norm_vals = []
+        self._name = name
 
         with open(file_path, 'rb') as file_input:
             file_reader = csv.reader(file_input, delimiter=',')
@@ -129,6 +132,17 @@ class Dataset(object):
 
         return training_data, test_data
 
+    @staticmethod
+    def getkPartitions(data, k):
+        indices = range(len(data))
+        shuffle(indices)
+        partitions = []
+
+        previous_step = 0
+        for step in range(0, len(data), len(data)/k):
+            partitions.append(data[previous_step:step])
+
+ 
     def kFoldCrossValidation(self, k):
         # Find the smallest class.
         size = None
@@ -178,3 +192,7 @@ class Dataset(object):
     @property
     def data(self):
         return self._data
+
+    @property
+    def name(self):
+        return self._name
