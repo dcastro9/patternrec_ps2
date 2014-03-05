@@ -138,9 +138,11 @@ class Dataset(object):
         shuffle(indices)
         partitions = []
 
-        previous_step = 0
         for step in range(0, len(data), len(data)/k):
-            partitions.append(data[previous_step:step])
+            if (len(partitions) == k):
+                break
+            partitions.append(data[step:step+len(data)/k])
+        return partitions
 
  
     def kFoldCrossValidation(self, k):

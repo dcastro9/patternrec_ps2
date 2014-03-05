@@ -1,0 +1,14 @@
+\begin{thebibliography}{\protect\citename{Yagnik et~al\mbox{.} }2011}
+
+\bibitem[\protect\citename{Bache and Lichman }2013]{Bache+Lichman:2013}
+{\sc Bache, K., and Lichman, M.}, 2013.
+\newblock {UCI} machine learning repository.
+
+\bibitem[\protect\citename{Yagnik et~al\mbox{.} }2011]{yagnik2011power}
+{\sc Yagnik, J., Strelow, D., Ross, D.~A., and Lin, R.-s.}
+\newblock 2011.
+\newblock The power of comparative reasoning.
+\newblock In {\em Computer Vision (ICCV), 2011 IEEE International Conference
+  on}, IEEE, 2431--2438.
+
+\end{thebibliography}
